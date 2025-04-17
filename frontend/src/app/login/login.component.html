@@ -1,0 +1,25 @@
+<div class="auth-form">
+    <h2>Login to S3</h2>
+  
+    <form (ngSubmit)="login()">
+      <label>
+        Access Key:
+        <input type="password" [(ngModel)]="accessKey" name="accessKey" required />
+      </label>
+  
+      <label>
+        Secret Key:
+        <input type="password" [(ngModel)]="secretKey" name="secretKey" required />
+      </label>
+  
+      <button type="submit" [disabled]="isLoading">
+        {{ isLoading ? 'Authenticating...' : 'Login' }}
+      </button>
+    </form>
+  
+    <div class="status">
+      <p *ngIf="success" class="success">Authenticated successfully</p>
+      <p *ngIf="error" class="error">Please enter correct credentials</p>
+    </div>
+  </div>
+  

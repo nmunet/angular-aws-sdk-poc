@@ -1,0 +1,22 @@
+`
+<h1>Available Buckets</h1>
+<ul>
+  <li
+    *ngFor="let bucket of buckets"
+    (click)="loadObjects(bucket)"
+    style="cursor: pointer; padding: 5px"
+  >
+    {{ bucket }}
+  </li>
+</ul>
+
+<ng-container *ngIf="selectedBucket">
+  <div *ngIf="objects.length; else noObjects">
+    <h2>Objects in {{ selectedBucket }}</h2>
+    <ul>
+      <li *ngFor="let obj of objects">{{ obj.Key }} ({{ obj.Size }} bytes)</li>
+    </ul>
+  </div>
+  `
+  <ng-template #noObjects> No objects found </ng-template>
+</ng-container>

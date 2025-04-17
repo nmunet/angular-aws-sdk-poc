@@ -1,0 +1,29 @@
+# === Angular Frontend ===
+frontend/node_modules/
+frontend/dist/
+frontend/.angular/
+frontend/.env
+frontend/.env.*.local
+frontend/.vscode/
+frontend/coverage/
+frontend/package-lock.json
+frontend/yarn.lock
+
+# === FastAPI Backend ===
+backend/__pycache__/
+backend/*.py[cod]
+backend/*.log
+backend/*.db
+backend/*.sqlite3
+backend/.env
+backend/venv/
+backend/env/
+backend/.mypy_cache/
+backend/.pytest_cache/
+backend/instance/
+
+# === Global ignores ===
+.DS_Store
+Thumbs.db
+.idea/
+.vscode/

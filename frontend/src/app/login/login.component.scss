@@ -1,0 +1,25 @@
+.auth-form {
+    max-width: 400px;
+    margin: 2rem auto;
+    padding: 1rem;
+    border: 1px solid #ccc;
+    border-radius: 5px;
+  }
+  .auth-form label {
+    display: block;
+    margin: 1rem 0;
+  }
+  .auth-form input {
+    width: 95%;
+    padding: 0.5rem;
+  }
+  button {
+    padding: 0.5rem 1rem;
+  }
+  .success {
+    color: green;
+  }
+  .error {
+    color: red;
+  }
+  
