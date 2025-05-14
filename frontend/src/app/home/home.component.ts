@@ -1,28 +1,41 @@
-import { Component, OnInit } from '@angular/core';
-import { S3Service } from '../s3.service';
+import { Component } from '@angular/core';
+import { HttpClient, HttpHeaders } from '@angular/common/http';
+import { AuthService } from '../auth.service';
+import { Router } from '@angular/router';
 
 @Component({
-  selector: 'app-home',
-  templateUrl: './home.component.html',
-  styleUrls: ['./home.component.scss']
+  selector: 'app-buckets',
+  template: `
+    <h2>S3 Buckets</h2>
+    <button (click)="loadBuckets()">Load Buckets</button>
+    <ul>
+      <li *ngFor="let b of buckets">{{ b }}</li>
+    </ul>
+    <button align="center" (click)=logout()>Logout</button>
+  `
 })
-export class HomeComponent implements OnInit {
+export class HomeComponent {
   buckets: string[] = [];
-  objects: any[] = [];
-  selectedBucket = '';
 
-  constructor(private s3Service: S3Service) {}
+  constructor(private http: HttpClient, private auth: AuthService, private router: Router) {}
 
-  ngOnInit() {
-    this.s3Service.getBuckets().subscribe((res) => {
-      this.buckets = res.buckets;
+  loadBuckets() {
+    const token = this.auth.getToken();
+    if (!token) {
+      alert('Not authenticated');
+      this.router.navigate(['/login'])
+    }
+
+    const headers = new HttpHeaders().set('Authorization', `Bearer ${token}`);
+    this.http.get<string[]>('http://localhost:8000/buckets', { headers }).subscribe({
+      next: data => this.buckets = data,
+      error: err => console.log('Failed to load buckets')
     });
   }
 
-  loadObjects(bucket: string) {
-    this.selectedBucket = bucket;
-    this.s3Service.getObjects(bucket).subscribe((res) => {
-      this.objects = res.objects || [];
-    });
+  logout() {
+    this.auth.logout().subscribe(res => {
+      this.router.navigate(['/login'])
+    })
   }
 }

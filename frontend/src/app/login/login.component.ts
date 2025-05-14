@@ -1,49 +1,35 @@
 import { Component } from '@angular/core';
-import { FormsModule } from '@angular/forms';
 import { AuthService } from '../auth.service';
 import { Router } from '@angular/router';
 
 @Component({
   selector: 'app-login',
-  templateUrl: './login.component.html',
-  styleUrls: ['./login.component.scss'],
+  template: `
+    <h2>Login with AWS Credentials</h2>
+<form (ngSubmit)="login()">
+  <input [(ngModel)]="accessKey" name="accessKey" placeholder="Access Key" required />
+  <input [(ngModel)]="secretKey" name="secretKey" placeholder="Secret Key" required type="password" />
+  <input [(ngModel)]="endpointUrl" name="endpointUrl" placeholder="S3 Endpoint URL (optional)" />
+  <button type="submit">Login</button>
+</form>
+
+  `
 })
 export class LoginComponent {
   accessKey = '';
   secretKey = '';
+  endpointUrl = ''; // Optional
 
-  isLoading = false;
-  error: string | null = null;
-  success: boolean = false;
-
-  constructor(private authService: AuthService, private router: Router) {}
+  constructor(private auth: AuthService, private router: Router) {}
 
   login() {
-    this.isLoading = true;
-    this.error = null;
-    this.success = false;
-
-    this.authService
-      .authenticateUser({
-        access_key: this.accessKey,
-        secret_key: this.secretKey,
-      })
-      .subscribe({
-        next: (res) => {
-          this.isLoading = false;
-          if (res.authenticated) {
-            this.success = true;
-            setTimeout(() => {
-              this.router.navigate(['/home']);
-            }, 500);
-          } else {
-            this.error = res.error || 'Authentication failed';
-          }
-        },
-        error: () => {
-          this.isLoading = false;
-          this.error = 'Could not connect to server';
-        },
-      });
+    this.auth.login(this.accessKey, this.secretKey, this.endpointUrl).subscribe({
+      next: res => {
+        this.auth.setToken(res.token);
+        alert(`Logged in as ${res.arn}`);
+        this.router.navigate(['/home'])
+      },
+      error: err => alert('Login failed: ' + err.message)
+    });
   }
 }

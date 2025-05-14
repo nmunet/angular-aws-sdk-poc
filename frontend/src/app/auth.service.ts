@@ -1,27 +1,34 @@
-import { HttpClient } from '@angular/common/http';
 import { Injectable } from '@angular/core';
-import { Observable } from 'rxjs';
+import { HttpClient } from '@angular/common/http';
 
-interface AuthRequest {
-  access_key: string;
-  secret_key: string;
-}
-
-interface AuthResponse {
-  authenticated: boolean;
-  error?: string;
-}
-
-@Injectable({
-  providedIn: 'root'
-})
+@Injectable({ providedIn: 'root' })
 export class AuthService {
-
-  private backendUrl = 'http://localhost:8000';
+  token: string | null = null;
 
   constructor(private http: HttpClient) {}
 
-  authenticateUser(auth: AuthRequest): Observable<AuthResponse> {
-    return this.http.post<AuthResponse>(`${this.backendUrl}/auth`, auth);
+  login(accessKey: string, secretKey: string, endpointUrl?: string) {
+    const body = {
+      access_key: accessKey,
+      secret_key: secretKey,
+      ...(endpointUrl && { endpoint_url: endpointUrl })
+    };
+    return this.http.post<{ token: string, arn: string }>('http://localhost:8000/login', body);
+  }
+
+  logout() {
+    return this.http.post('http://localhost:8000/logout', {}, {
+      headers: {
+        Authorization: `Bearer ${this.getToken()}`
+      }
+    })
+  }
+
+  setToken(token: string) {
+    this.token = token;
+  }
+
+  getToken() {
+    return this.token;
   }
 }
